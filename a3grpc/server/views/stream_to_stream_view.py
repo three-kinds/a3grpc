@@ -16,16 +16,16 @@ class StreamToStreamView:
     def handle_stream_to_stream(self):
         try:
 
-            self.handle_request_iterator()
-            yield from self.handle_reply_iterator()
+            self._handle_request_iterator()
+            yield from self._handle_reply_iterator()
 
         except Exception as err:
             handle_exception(logger=self._logger, context=self._context, err=err)
 
     @abc.abstractmethod
-    def handle_request_iterator(self):
+    def _handle_request_iterator(self):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def handle_reply_iterator(self):
+    def _handle_reply_iterator(self):
         raise NotImplementedError()

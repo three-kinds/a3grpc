@@ -51,7 +51,7 @@ def run_grpc_server(conf: dict, logger: Logger):
     )
 
     # 添加service_instance
-    servicer_mappings = import_string(conf['mappings'])
+    servicer_mappings = import_string(conf['servicer_mappings'])
     for add_func, servicer in servicer_mappings.items():
         add_func(servicer, server)
 

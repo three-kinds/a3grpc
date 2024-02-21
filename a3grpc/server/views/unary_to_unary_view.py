@@ -15,11 +15,11 @@ class UnaryToUnaryView:
     def handle_unary_to_unary(self):
         try:
 
-            return self.handle_request()
+            return self._handle_request()
 
         except Exception as err:
             handle_exception(logger=self._logger, context=self._context, err=err)
 
     @abc.abstractmethod
-    def handle_request(self):
+    def _handle_request(self):
         raise NotImplementedError()

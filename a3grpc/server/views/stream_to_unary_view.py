@@ -17,17 +17,17 @@ class StreamToUnaryView:
         try:
 
             for request in self._request_iterator:
-                self.handle_request(request)
+                self._handle_request(request)
 
-            return self.handle_reply()
+            return self._handle_reply()
 
         except Exception as err:
             handle_exception(logger=self._logger, context=self._context, err=err)
 
     @abc.abstractmethod
-    def handle_request(self, request):
+    def _handle_request(self, request):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def handle_reply(self):
+    def _handle_reply(self):
         raise NotImplementedError()
