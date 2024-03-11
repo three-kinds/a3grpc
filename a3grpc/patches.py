@@ -8,6 +8,7 @@ class A3StatusCode(enum.Enum):
     ServerSideError = (500, "server side error")
 
 
+# Both the client-side and the server-side must run this patch.
 def patch_status_code():
     from grpc import _common # noqa
     a3_status_code = {

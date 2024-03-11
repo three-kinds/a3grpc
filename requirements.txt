@@ -1,5 +1,5 @@
 a3py >= 0.1.6
-a3exception >= 0.1.1
+a3exception >= 0.1.2
 grpcio
 grpcio-tools
 
