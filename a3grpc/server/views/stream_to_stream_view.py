@@ -6,10 +6,9 @@ from .utils import handle_exception
 
 
 class StreamToStreamView:
-    logger_name = None
+    logger = logging.getLogger(__name__)
 
     def __init__(self, context, request_iterator):
-        self._logger = logging.getLogger(self.logger_name)
         self._context = context
         self._request_iterator = request_iterator
 
@@ -20,7 +19,7 @@ class StreamToStreamView:
             yield from self._handle_reply_iterator()
 
         except Exception as err:
-            handle_exception(logger=self._logger, context=self._context, err=err)
+            handle_exception(logger=self.logger, context=self._context, err=err)
 
     @abc.abstractmethod
     def _handle_request_iterator(self):

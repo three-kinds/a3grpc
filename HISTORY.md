@@ -1,5 +1,6 @@
 # History
 
-## 0.1.0
+## 0.1.2
 
-1. add 
+1. It works, but only just.
+
