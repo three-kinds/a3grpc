@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import os
+import threading
 from logging import Logger
 from concurrent import futures
 import grpc
@@ -16,6 +17,7 @@ _example_conf = {
     'server_key': '/data/ssl/server-key.pem',
     'server_cert': '/data/ssl/server.pem',
     'ca_cert': '/data/ssl/ca.pem',
+    'grace_stop_seconds': 10,
     'options': (
         ('grpc.keepalive_time_ms', 10000),
         ('grpc.keepalive_timeout_ms', 5000),
@@ -30,7 +32,7 @@ _example_conf = {
 }
 
 
-def run_grpc_server(conf: dict, logger: Logger):
+def run_grpc_server(conf: dict, logger: Logger, exit_event: threading.Event):
     logger.info('[BOOT]启动GRPC服务中...')
 
     # 准备拦截器
@@ -89,4 +91,8 @@ def run_grpc_server(conf: dict, logger: Logger):
 
     server.start()
     logger.info(f'[SUCCESS]服务已开启: {host_port}，主进程: {os.getpid()}')
-    server.wait_for_termination()
+
+    exit_event.wait()
+    grace_stop_seconds = conf.get('grace_stop_seconds')
+    server.stop(grace=grace_stop_seconds).wait()
+    logger.info(f'GRPC-Server 已停止')
