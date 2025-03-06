@@ -2,4 +2,4 @@
 from google.protobuf import empty_pb2
 
 
-Empty = empty_pb2.Empty # noqa
+Empty = empty_pb2.Empty  # noqa

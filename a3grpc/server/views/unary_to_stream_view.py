@@ -14,7 +14,6 @@ class UnaryToStreamView:
 
     def handle_unary_to_stream(self):
         try:
-
             yield from self._handle_request()
 
         except Exception as err:

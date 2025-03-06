@@ -10,7 +10,8 @@ dependencies = [
     "a3py >= 0.3.0",
     "a3exception >= 0.3.0",
     "grpcio",
-    "grpcio-tools"
+    "grpcio-tools",
+    "protobuf"
 ]
 authors = [
   {name = "three-kinds", email = "3179158552@qq.com"},

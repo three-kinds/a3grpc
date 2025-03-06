@@ -2,3 +2,4 @@ a3py >= 0.3.0
 a3exception >= 0.3.0
 grpcio
 grpcio-tools
+protobuf

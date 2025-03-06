@@ -14,7 +14,6 @@ class StreamToUnaryView:
 
     def handle_stream_to_unary(self):
         try:
-
             for request in self._request_iterator:
                 self._handle_request(request)
 

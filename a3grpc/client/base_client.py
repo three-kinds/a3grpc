@@ -5,17 +5,17 @@ import time
 from typing import Type, Tuple, Optional, Callable, TypeVar
 
 from a3py.improved.json import fast_loads
-from a3exception.errors import ErrorType, ClientPanicError
+from a3exception.errors import ErrorType, PanicError
 from a3exception.dynamic_error_factory import DynamicErrorFactory
-from a3grpc.patches import A3StatusCode
+from a3grpc.patcher import Patcher
 
 
 def _load_file(filename: str) -> bytes:
-    with open(filename, 'rb') as fd:
+    with open(filename, "rb") as fd:
         return fd.read()
 
 
-TypeStub = TypeVar('TypeStub')
+TypeStub = TypeVar("TypeStub")
 
 
 class BaseClient:
@@ -23,16 +23,16 @@ class BaseClient:
     stub_klass: Type[TypeStub] = None
 
     def __init__(
-            self,
-            host: str,
-            port: int,
-            client_cert: str = None,
-            client_key: str = None,
-            ca_cert: str = None,
-            grpc_options: Tuple[Tuple[str, any]] = None,
-            compression: int = grpc.Compression.Gzip,
-            retry_times: int = 5,
-            retry_sleep_seconds: int = 3
+        self,
+        host: str,
+        port: int,
+        client_cert: str = None,
+        client_key: str = None,
+        ca_cert: str = None,
+        grpc_options: Tuple[Tuple[str, any]] = None,
+        compression: int = grpc.Compression.Gzip,
+        retry_times: int = 5,
+        retry_sleep_seconds: int = 3,
     ):
         self._host = host
         self._port = port
@@ -48,6 +48,7 @@ class BaseClient:
         self._grpc_channel: Optional[grpc.Channel] = None
         self._stub: TypeStub = None
 
+        self._patcher = Patcher()
         self._connect_server()
 
     def _connect_server(self):
@@ -58,16 +59,16 @@ class BaseClient:
                 certificate_chain=_load_file(self._client_cert),
             )
             self._grpc_channel = grpc.secure_channel(
-                f'{self._host}:{self._port}',
+                f"{self._host}:{self._port}",
                 creds,
                 options=self._grpc_options,
-                compression=self._compression
+                compression=self._compression,
             )
         else:
             self._grpc_channel = grpc.insecure_channel(
                 f"{self._host}:{self._port}",
                 options=self._grpc_options,
-                compression=self._compression
+                compression=self._compression,
             )
 
         self._stub = self.stub_klass(self._grpc_channel)
@@ -83,17 +84,26 @@ class BaseClient:
                 status_code = e.code()
                 error_message = e.details()
 
-                if status_code in [A3StatusCode.ClientSideError, A3StatusCode.ServerSideError]:
+                status_code_enum = self._patcher.status_code_enum
+                if status_code in [
+                    status_code_enum.UnsetError,
+                    status_code_enum.ClientSideError,
+                    status_code_enum.ServerSideError,
+                ]:
                     rd = fast_loads(error_message)
-                    if status_code == A3StatusCode.ClientSideError:
+                    if status_code == status_code_enum.UnsetError:
+                        error_type = ErrorType.UnsetError
+                    elif status_code == status_code_enum.ClientSideError:
                         error_type = ErrorType.ClientSideError
                     else:
                         error_type = ErrorType.ServerSideError
 
-                    rd['error_type'] = error_type
+                    rd["error_type"] = error_type
                     raise DynamicErrorFactory.build_error_by_status(**rd)
                 else:
-                    self.logger.warning(f"[grpc-unexpected-error]: {status_code}, {error_message}, 准备重试")
+                    self.logger.warning(
+                        f"[grpc-unexpected-error]: {status_code}, {error_message}, 准备重试"
+                    )
                     if i + 1 >= self._retry_times:
                         break
 
@@ -101,4 +111,6 @@ class BaseClient:
                     if status_code == grpc.StatusCode.UNAVAILABLE:
                         self._connect_server()
 
-        raise ClientPanicError(message=f"服务端不可用，已重试{self._retry_times}，仍无法连接：{status_code}, {error_message}")
+        raise PanicError(
+            message=f"服务端不可用，已重试{self._retry_times}，仍无法连接：{status_code}, {error_message}"
+        )

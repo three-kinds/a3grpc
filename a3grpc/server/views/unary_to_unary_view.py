@@ -13,7 +13,6 @@ class UnaryToUnaryView:
 
     def handle_unary_to_unary(self):
         try:
-
             return self._handle_request()
 
         except Exception as err:

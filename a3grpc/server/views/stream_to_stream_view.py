@@ -14,7 +14,6 @@ class StreamToStreamView:
 
     def handle_stream_to_stream(self):
         try:
-
             self._handle_request_iterator()
             yield from self._handle_reply_iterator()
 
