@@ -1,48 +1,59 @@
 # -*- coding: utf-8 -*-
 import enum
-from a3py.practical.singleton_meta import SingletonMeta
 
 
-class Patcher(metaclass=SingletonMeta):
-    is_patched = False
+class _DefaultErrorCode:
+    ClientSideError = 499
+    ServerSideError = 599
 
-    def __init__(
-        self,
-        unset_error_code: int = 490,
-        client_site_error_code: int = 499,
-        server_site_error_code: int = 599,
+
+class _ErrorText:
+    ClientSideError = "client side error"
+    ServerSideError = "server side error"
+
+
+@enum.unique
+class _DefaultA3StatusCode(enum.Enum):
+    ClientSideError = (_DefaultErrorCode.ClientSideError, _ErrorText.ClientSideError)
+    ServerSideError = (_DefaultErrorCode.ServerSideError, _ErrorText.ServerSideError)
+
+
+class Patcher:
+    has_patched_status_code = False
+    A3StatusCode = _DefaultA3StatusCode
+
+    @classmethod
+    def patch_status_code(
+        cls,
+        client_site_error_code: int | None = None,
+        server_site_error_code: int | None = None,
     ):
-        self._unset_error_code = unset_error_code
-        self._client_site_error_code = client_site_error_code
-        self._server_site_error_code = server_site_error_code
-
-        @enum.unique
-        class StatusCodeEnum(enum.Enum):
-            UnsetError = (self._unset_error_code, "unset error")
-            ClientSideError = (self._client_site_error_code, "client side error")
-            ServerSideError = (self._server_site_error_code, "server side error")
-
-        self.status_code_enum = StatusCodeEnum
-
-        self._patch_all()
-
-    def _patch_all(self):
-        if self.is_patched:
+        if cls.has_patched_status_code:
             return
 
-        self.is_patched = True
-        self._patch_status_code()
+        cls.has_patched_status_code = True
 
-    def _patch_status_code(self):
+        client_site_error_code = client_site_error_code or _DefaultErrorCode.ClientSideError
+        server_site_error_code = server_site_error_code or _DefaultErrorCode.ServerSideError
+
+        if (
+            client_site_error_code != _DefaultErrorCode.ClientSideError
+            or server_site_error_code != _DefaultErrorCode.ServerSideError
+        ):
+
+            @enum.unique
+            class A3StatusCode(enum.Enum):
+                ClientSideError = (client_site_error_code, _ErrorText.ClientSideError)
+                ServerSideError = (server_site_error_code, _ErrorText.ServerSideError)
+
+            cls.A3StatusCode = A3StatusCode
+
         status_code = {
-            self._unset_error_code: self.status_code_enum.UnsetError,
-            self._client_site_error_code: self.status_code_enum.ClientSideError,
-            self._server_site_error_code: self.status_code_enum.ServerSideError,
+            client_site_error_code: cls.A3StatusCode.ClientSideError,
+            server_site_error_code: cls.A3StatusCode.ServerSideError,
         }
 
         from grpc import _common  # noqa
 
         _common.CYGRPC_STATUS_CODE_TO_STATUS_CODE.update(status_code)
-        _common.STATUS_CODE_TO_CYGRPC_STATUS_CODE.update(
-            {v: k for k, v in status_code.items()}
-        )
+        _common.STATUS_CODE_TO_CYGRPC_STATUS_CODE.update({v: k for k, v in status_code.items()})
