@@ -1,13 +1,20 @@
+PROJECT_NAME = a3grpc
+
 init:
 	pip3 install -r requirements.txt
+	pip3 install -r requirements-dev.txt
 
 coverage:
-	sh scripts/coverage.sh
+	coverage erase
+	coverage run --source=$(PROJECT_NAME) -m unittest discover
+	coverage html
+	python3 -m webbrowser ./htmlcov/index.html
 
-test: coverage
+test:
+	tox -p
 
-sdist:
-	python setup.py sdist
+build:
+	python -m build
 
 clean:
 	rm -rf build dist .egg *.egg-info
@@ -15,4 +22,9 @@ clean:
 upload:
 	twine upload dist/* --verbose
 
-package: sdist upload clean
+format:
+	ruff format
+
+check:
+	ruff check
+	mypy

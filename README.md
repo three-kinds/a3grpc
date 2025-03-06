@@ -1,8 +1,6 @@
 # a3grpc
 
-To make using gRPC simpler.
-
-[History.](HISTORY.md)
+`a3grpc` is a simple wrapper around grpc to make it easier to use.
 
 ## Install
 

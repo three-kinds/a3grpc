@@ -1,8 +1,4 @@
-a3py >= 0.1.6
-a3exception >= 0.1.2
+a3py >= 0.3.0
+a3exception >= 0.3.0
 grpcio
 grpcio-tools
-
-# 测试与维护
-coverage >= 6.3.2
-twine

@@ -1,6 +1,5 @@
 # History
 
-## 0.1.2
+## 0.3.0
 
-1. It works, but only just.
-
+* Restructure the project.

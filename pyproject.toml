@@ -1,0 +1,60 @@
+[build-system]
+requires = ["setuptools>=61.0.0,<69.3.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a3grpc"
+dynamic = ["version"]
+requires-python = ">= 3.10"
+dependencies = [
+    "a3py >= 0.3.0",
+    "a3exception >= 0.3.0",
+    "grpcio",
+    "grpcio-tools"
+]
+authors = [
+  {name = "three-kinds", email = "3179158552@qq.com"},
+]
+description = "a3grpc  is a simple wrapper around grpc to make it easier to use."
+readme = "README.md"
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.urls]
+Homepage = "https://github.com/three-kinds/a3grpc"
+Source = "https://github.com/three-kinds/a3grpc"
+
+[tool.setuptools.dynamic]
+version = {attr = "a3grpc.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["a3grpc*"]
+
+[tool.mypy]
+packages = [
+    "a3grpc",
+    "tests"
+]
+disable_error_code = [
+    "import-untyped",
+    "method-assign"
+]
+
+[tool.ruff]
+src = [
+    "a3grpc",
+    "tests"
+]
