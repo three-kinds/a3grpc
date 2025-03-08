@@ -18,11 +18,7 @@ def handle_exception(logger: logging.Logger, context, err: Exception):
     else:
         code = Patcher.A3StatusCode.ServerSideError
         error_message = (
-            f"\n"
-            f"status: {err.status}\n"
-            + f"message: {err.message}\n"
-            + f"cause: {err.cause}\n"
-            + f"traceback: {traceback.format_exc()}\n"
+            f"\nstatus: {err.status}\nmessage: {err.message}\ncause: {err.cause}\ntraceback: {traceback.format_exc()}\n"
         )
         logger.critical(error_message)
 

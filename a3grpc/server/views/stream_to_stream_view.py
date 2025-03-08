@@ -2,7 +2,7 @@
 import abc
 import logging
 
-from .utils import handle_exception
+from .view_utils import handle_exception
 
 
 class StreamToStreamView:
@@ -16,7 +16,6 @@ class StreamToStreamView:
         try:
             self._handle_request_iterator()
             yield from self._handle_reply_iterator()
-
         except Exception as err:
             handle_exception(logger=self.logger, context=self._context, err=err)
 

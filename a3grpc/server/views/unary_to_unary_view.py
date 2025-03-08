@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import abc
 import logging
-from .utils import handle_exception
+
+from .view_utils import handle_exception
 
 
 class UnaryToUnaryView:
@@ -14,7 +15,6 @@ class UnaryToUnaryView:
     def handle_unary_to_unary(self):
         try:
             return self._handle_request()
-
         except Exception as err:
             handle_exception(logger=self.logger, context=self._context, err=err)
 

@@ -2,7 +2,7 @@
 import abc
 import logging
 
-from .utils import handle_exception
+from .view_utils import handle_exception
 
 
 class StreamToUnaryView:
@@ -16,9 +16,7 @@ class StreamToUnaryView:
         try:
             for request in self._request_iterator:
                 self._handle_request(request)
-
             return self._handle_reply()
-
         except Exception as err:
             handle_exception(logger=self.logger, context=self._context, err=err)
 
