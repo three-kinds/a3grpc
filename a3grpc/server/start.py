@@ -80,9 +80,9 @@ def run_grpc_server(conf: dict):
         logger.info("The gRPC service has been stopped.")
 
     pm = PrioritizedSignalHandlerManager()
-    for sig in [signal.SIGINT, signal.SIGTERM]:
-        pm.add_handler(sig, _graceful_shutdown_handler, priority=100)
-        pm.add_handler(sig, exit_0_handler, priority=200)
+    for signum in [signal.SIGINT, signal.SIGTERM]:
+        pm.add_handler(signum, _graceful_shutdown_handler, priority=100)
+        pm.add_handler(signum, exit_0_handler, priority=200)
 
     # block waiting for server termination
     server.wait_for_termination()
@@ -114,7 +114,13 @@ def run_grpc_server_with_multiprocessing(conf: dict, process_count: int | None =
             worker.start()
             worker_list.append(worker)
 
-        # todo: 母进程被kill时，子进程们也被kill
+        def _shutdown_subprocesses(*_, **__):
+            logger.info("Received exit signal, preparing to shut down the subprocesses....")
+            for w in worker_list:
+                os.kill(w.pid, signal.SIGTERM)
+
+        for signum in [signal.SIGINT, signal.SIGTERM]:
+            signal.signal(signum, _shutdown_subprocesses)
 
         for worker in worker_list:
             worker.join()
