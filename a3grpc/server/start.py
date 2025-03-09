@@ -72,12 +72,12 @@ def run_grpc_server(conf: dict):
     logger.info(f"The service has been started: {host_port}，pid: {os.getpid()}")
 
     # graceful shutdown
-    grace_stop_seconds = conf.get("grace_stop_seconds")
+    graceful_shutdown_seconds = conf.get("graceful_shutdown_seconds")
 
     def _graceful_shutdown_handler(*_, **__):
-        logger.info(f"Received exit signal, preparing to shut down the service....")
-        server.stop(grace=grace_stop_seconds).wait()
-        logger.info(f"The gRPC service has been stopped.")
+        logger.info("Received exit signal, preparing to shut down the service....")
+        server.stop(grace=graceful_shutdown_seconds).wait()
+        logger.info("The gRPC service has been stopped.")
 
     pm = PrioritizedSignalHandlerManager()
     for sig in [signal.SIGINT, signal.SIGTERM]:
@@ -102,7 +102,7 @@ def _reserve_port(port: int):
         sock.close()
 
 
-def run_grpc_server_with_multiprocessing(conf: dict, process_count: int = None):
+def run_grpc_server_with_multiprocessing(conf: dict, process_count: int | None = None):
     process_count = process_count or conf.get("process_count") or multiprocessing.cpu_count()
 
     with _reserve_port(conf["port"]):
@@ -113,6 +113,8 @@ def run_grpc_server_with_multiprocessing(conf: dict, process_count: int = None):
             worker = multiprocessing.Process(target=run_grpc_server, args=(conf,))
             worker.start()
             worker_list.append(worker)
+
+        # todo: 母进程被kill时，子进程们也被kill
 
         for worker in worker_list:
             worker.join()

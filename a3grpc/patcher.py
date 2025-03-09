@@ -46,7 +46,7 @@ class Patcher:
                 ClientSideError = (client_site_error_code, _ErrorText.ClientSideError)
                 ServerSideError = (server_site_error_code, _ErrorText.ServerSideError)
 
-            cls.A3StatusCode = A3StatusCode
+            cls.A3StatusCode = A3StatusCode # type: ignore
 
         status_code = {
             client_site_error_code: cls.A3StatusCode.ClientSideError,
