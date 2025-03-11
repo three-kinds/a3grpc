@@ -9,29 +9,38 @@ from tests.pb.hello_world_pb2 import HelloReply, HelloRequest
 class SayHelloView(UnaryToUnaryView):
 
     def _handle_request(self) -> HelloReply:
-        pass
+        return HelloReply(message=f"Hello {self._request.name}!")
 
 
 class SayStreamHelloReplyView(StreamToUnaryView):
 
-    def _handle_request(self, request):
-        pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.times = 0
 
-    def _handle_reply(self):
-        pass
+    def _handle_request(self, request: HelloRequest):
+        self.times += 1
+
+    def _handle_reply(self) -> HelloReply:
+        return HelloReply(message=f"Hello {self.times} times!")
 
 
 class SayHelloStreamReplyView(UnaryToStreamView):
-    def _handle_request(self):
-        pass
+    def _handle_request(self) -> Iterator[HelloReply]:
+        for i in range(3):
+            yield HelloReply(message=f"[{i}]Hello {self._request.name}!")
 
 
 class SayHelloBidiStream(StreamToStreamView):
-    def _handle_request_iterator(self):
-        pass
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.current_name = ""
 
-    def _handle_reply_iterator(self):
-        pass
+    def _handle_request(self, request: HelloRequest):
+        self.current_name = request.name
+
+    def _handle_reply(self) -> HelloReply:
+        return HelloReply(message=f"Hello {self.current_name}!")
 
 
 class Greeter(GreeterServicer):
