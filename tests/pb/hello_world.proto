@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+service Greeter {
+  rpc say_hello (HelloRequest) returns (HelloReply) {}
+  rpc say_stream_hello_reply (stream HelloRequest) returns (HelloReply) {}
+  rpc say_hello_stream_reply (HelloRequest) returns (stream HelloReply) {}
+  rpc say_hello_bidi_stream (stream HelloRequest) returns (stream HelloReply) {}
+}
+
+message HelloRequest {
+  string name = 1;
+}
+
+message HelloReply {
+  string message = 1;
+}
