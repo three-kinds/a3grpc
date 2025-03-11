@@ -7,6 +7,7 @@ init:
 coverage:
 	coverage erase
 	coverage run --source=$(PROJECT_NAME) -m unittest discover
+	coverage combine
 	coverage html
 	python3 -m webbrowser ./htmlcov/index.html
 

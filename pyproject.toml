@@ -44,6 +44,12 @@ version = {attr = "a3grpc.__version__"}
 [tool.setuptools.packages.find]
 include = ["a3grpc*"]
 
+[tool.coverage.run]
+source = ["a3grpc"]
+parallel = true
+concurrency = ["multiprocessing"]
+sigterm = false
+
 [tool.mypy]
 packages = [
     "a3grpc",
