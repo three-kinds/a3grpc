@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import hello_world_pb2 as hello__world__pb2
+import tests.pb.hello_world_pb2 as hello__world__pb2
 
 GRPC_GENERATED_VERSION = '1.70.0'
 GRPC_VERSION = grpc.__version__

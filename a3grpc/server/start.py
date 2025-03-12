@@ -57,16 +57,9 @@ def run_grpc_server(conf: dict):
             root_certificates=root_certificates,
             require_client_auth=True,
         )
-
-        listen_result = server.add_secure_port(host_port, server_credentials=server_credentials)
+        server.add_secure_port(host_port, server_credentials=server_credentials)
     else:
-        listen_result = server.add_insecure_port(host_port)
-
-    # Old versions require manual detection, while new versions will detect automatically.
-    if listen_result != int(conf["port"]):
-        logger.error(f"Failed to listen on the port: {host_port}.")
-        server.stop(0)
-        sys.exit(-1)
+        server.add_insecure_port(host_port)
 
     server.start()
     logger.info(f"The service has been started: {host_port}，pid: {os.getpid()}")
