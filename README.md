@@ -71,5 +71,5 @@ pip install a3grpc
 
 ## Examples
 
-* [Server](example/server.py)
-* [Client](example/client.py)
+* [Server](tests/server.py)
+* [Client](tests/client.py)

@@ -71,5 +71,5 @@ pip install a3grpc
 
 ## 样例
 
-* [服务端](example/server.py)
-* [客户端](example/client.py)
+* [服务端](tests/server.py)
+* [客户端](tests/client.py)
