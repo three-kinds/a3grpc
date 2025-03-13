@@ -65,7 +65,7 @@ def run_grpc_server(conf: dict):
     logger.info(f"The service has been started: {host_port}，pid: {os.getpid()}")
 
     # graceful shutdown
-    graceful_shutdown_seconds = conf.get("graceful_shutdown_seconds")
+    graceful_shutdown_seconds = conf.get("graceful_shutdown_seconds") or 3
 
     def _graceful_shutdown_handler(*_, **__):
         logger.info("Received exit signal, preparing to shut down the service....")
@@ -86,8 +86,8 @@ def _reserve_port(port: int):
     """Find and reserve a port for all subprocesses to use."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-    if sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT) == 0:
-        raise RuntimeError("Failed to set SO_REUSEPORT.")
+    ov = sock.getsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT)
+    assert ov == 1, "Failed to set SO_REUSEPORT."
     sock.bind(("", port))
     try:
         yield sock.getsockname()[1]

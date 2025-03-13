@@ -31,6 +31,7 @@ class BaseClient(Generic[TypeStub]):
         compression: int = grpc.Compression.Gzip,
         retry_times: int = 5,
         retry_sleep_seconds: int = 3,
+        patch_status_code: dict | None = None,
     ):
         self._host = host
         self._port = port
@@ -46,7 +47,8 @@ class BaseClient(Generic[TypeStub]):
         self._grpc_channel: Optional[grpc.Channel] = None
         self._stub: TypeStub | None = None
 
-        Patcher.patch_status_code(client_site_error_code=None, server_site_error_code=None)
+        patch_status_code = patch_status_code or dict()
+        Patcher.patch_status_code(**patch_status_code)
         self._connect_server()
 
     def _connect_server(self):
