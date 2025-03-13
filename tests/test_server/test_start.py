@@ -21,6 +21,7 @@ class TestServer(unittest.TestCase):
 
     def test__run_grpc_server__with_simplest_conf(self):
         port = 50051
+
         class ServerProcess(multiprocessing.Process):
             def run(self):
                 conf = {
@@ -102,6 +103,7 @@ class TestServer(unittest.TestCase):
 
     def test__run_grpc_server__with_interceptors(self):
         port = 50053
+
         class ServerProcess(multiprocessing.Process):
             def run(self):
                 conf = {

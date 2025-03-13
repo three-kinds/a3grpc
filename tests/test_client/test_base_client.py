@@ -11,9 +11,9 @@ from tests.client import Client
 
 
 class TestBaseClient(TestCase):
-
     def test__run_with_retry(self):
         port = 50061
+
         class ServerProcess(multiprocessing.Process):
             def run(self):
                 conf = {
@@ -25,7 +25,7 @@ class TestBaseClient(TestCase):
                 }
                 run_grpc_server(conf)
 
-        server_process =ServerProcess()
+        server_process = ServerProcess()
         server_process.start()
         time.sleep(1)
 
@@ -37,10 +37,7 @@ class TestBaseClient(TestCase):
                     port=port,
                     retry_times=2,
                     retry_sleep_seconds=0,
-                    patch_status_code={
-                        "client_site_error_code": 777,
-                        "server_site_error_code": 888
-                    }
+                    patch_status_code={"client_site_error_code": 777, "server_site_error_code": 888},
                 )
                 client.say_hello("error")
 

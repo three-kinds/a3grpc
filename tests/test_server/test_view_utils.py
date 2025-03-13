@@ -38,4 +38,3 @@ class TestViewUtils(TestCase):
         self.assertEqual(context.code, Patcher.A3StatusCode.ClientSideError)
         rd = fast_loads(context.details)
         self.assertEqual(rd["status"], errors.ForbiddenError.__name__)
-
