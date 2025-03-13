@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from grpc._channel import _InactiveRpcError  # noqa
-from grpc._server import _Context # noqa
+from grpc._server import _Context  # noqa
 from google.protobuf import empty_pb2
 
 

@@ -2,8 +2,10 @@
 import logging
 import sys
 import time
+from pathlib import Path
 from typing import Type, Tuple, Optional, Callable, TypeVar, Any, Generic
 import grpc
+
 from a3py.improved.json import fast_loads
 from a3exception.errors import ErrorType
 from a3exception.dynamic_error_factory import DynamicErrorFactory
@@ -50,9 +52,9 @@ class BaseClient(Generic[TypeStub]):
     def _connect_server(self):
         if None not in {self._client_key, self._client_cert, self._ca_cert}:
             creds = grpc.ssl_channel_credentials(
-                root_certificates=open(self._ca_cert, "rb").read(),
-                private_key=open(self._client_key, "rb").read(),
-                certificate_chain=open(self._client_cert, "rb").read(),
+                root_certificates=Path(self._ca_cert).read_bytes(),
+                private_key=Path(self._client_key).read_bytes(),
+                certificate_chain=Path(self._client_cert).read_bytes(),
             )
             self._grpc_channel = grpc.secure_channel(
                 f"{self._host}:{self._port}",

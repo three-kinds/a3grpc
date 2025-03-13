@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import contextlib
 import logging
-import sys
+from pathlib import Path
 import os
 import signal
 import multiprocessing
@@ -49,9 +49,9 @@ def run_grpc_server(conf: dict):
     server_cert = conf.get("server_cert")
     ca_cert = conf.get("ca_cert")
     if server_key is not None and server_cert is not None and ca_cert is not None:
-        private_key = open(server_key, "rb").read()
-        cert_chain = open(server_cert, "rb").read()
-        root_certificates = open(ca_cert, "rb").read()
+        private_key = Path(server_key).read_bytes()
+        cert_chain = Path(server_cert).read_bytes()
+        root_certificates = Path(ca_cert).read_bytes()
         server_credentials = grpc.ssl_server_credentials(
             private_key_certificate_chain_pairs=[(private_key, cert_chain)],
             root_certificates=root_certificates,
